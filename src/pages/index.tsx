@@ -80,8 +80,8 @@ export default function Home() {
       <div className="flex-grow flex justify-center p-5">
         <div
           ref={captureRef}
-          className={`flex flex-col gap-4 justify-around aspect-[9/19.5] p-5 rounded-lg ${
-            isCapturing ? "" : "border-2 border-gray-700 shadow-md"
+          className={`flex flex-col gap-4 justify-around aspect-[9/19.5] p-5 ${
+            isCapturing ? "" : "border-2 border-gray-700 shadow-md rounded-lg"
           }`}
           style={{
             backgroundColor: backgroundColor,
