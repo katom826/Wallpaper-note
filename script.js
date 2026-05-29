@@ -140,8 +140,16 @@ function adjustHeight() {
         const viewportHeight = window.visualViewport.height;
         document.body.style.height = `${viewportHeight}px`;
         document.getElementById('app').style.height = `${viewportHeight}px`;
+        window.scrollTo(0, 0);
     }
 }
+
+// iOS特有の画面持ち上がり（スクロール）を防止
+window.addEventListener('scroll', () => {
+    if (document.activeElement === memoInput) {
+        window.scrollTo(0, 0);
+    }
+});
 
 // --- モーダル操作 ---
 function openModal() {
