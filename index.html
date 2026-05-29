@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPhone 14 Wallpaper Memo</title>
+    <title>Wallpaper Memo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;600&display=swap" rel="stylesheet">
@@ -11,6 +11,34 @@
 </head>
 <body>
     <div id="app">
+        <!-- 設定ボタン -->
+        <button id="settings-btn" class="settings-btn" aria-label="設定">
+            <img src="aspect_ratio_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.svg" alt="設定" width="24" height="24">
+        </button>
+
+        <!-- 設定モーダル -->
+        <div id="settings-modal" class="modal-overlay" hidden>
+            <div class="modal">
+                <h2 class="modal-title">解像度設定</h2>
+                <p class="modal-desc">壁紙の出力サイズをピクセルで指定してください</p>
+                <div class="modal-inputs">
+                    <div class="input-group">
+                        <label for="res-width">横幅 (px)</label>
+                        <input type="number" id="res-width" min="100" max="9999" value="1170">
+                    </div>
+                    <span class="input-separator">×</span>
+                    <div class="input-group">
+                        <label for="res-height">高さ (px)</label>
+                        <input type="number" id="res-height" min="100" max="9999" value="2532">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="modal-cancel" class="modal-btn secondary">キャンセル</button>
+                    <button id="modal-save" class="modal-btn primary">保存</button>
+                </div>
+            </div>
+        </div>
+
         <main class="input-container">
             <div 
                 id="memo-input" 

@@ -2,18 +2,66 @@ const canvas = document.getElementById('export-canvas');
 const ctx = canvas.getContext('2d');
 const memoInput = document.getElementById('memo-input');
 const downloadBtn = document.getElementById('download-btn');
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const modalCancel = document.getElementById('modal-cancel');
+const modalSave = document.getElementById('modal-save');
+const resWidthInput = document.getElementById('res-width');
+const resHeightInput = document.getElementById('res-height');
 
-// 設定
+// デフォルト設定
+const DEFAULT_WIDTH = 1170;
+const DEFAULT_HEIGHT = 2532;
+
+// 設定 (ローカルストレージから読み込み)
 const CONFIG = {
-    width: 1170,
-    height: 2532,
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
     bgColor: '#a63d3d',
     textColor: '#ffffff',
-    fontSize: 100, // 高解像度用のベースサイズ
+    fontSize: 100,
     lineHeight: 1.4,
     padding: 100,
     fontFamily: "'Outfit', 'Noto Sans JP', sans-serif"
 };
+
+/**
+ * ローカルストレージから解像度設定を読み込む
+ */
+function loadSettings() {
+    const saved = localStorage.getItem('wallpaper-resolution');
+    if (saved) {
+        try {
+            const { width, height } = JSON.parse(saved);
+            CONFIG.width = width;
+            CONFIG.height = height;
+        } catch (e) {
+            // 壊れたデータは無視
+        }
+    }
+    // Canvas のサイズを更新
+    canvas.width = CONFIG.width;
+    canvas.height = CONFIG.height;
+    // フォントサイズを解像度に応じて自動調整
+    CONFIG.fontSize = Math.round(CONFIG.width * 0.085);
+    CONFIG.padding = Math.round(CONFIG.width * 0.085);
+    // フォーム値を同期
+    resWidthInput.value = CONFIG.width;
+    resHeightInput.value = CONFIG.height;
+}
+
+/**
+ * 解像度設定をローカルストレージに保存する
+ */
+function saveSettings(width, height) {
+    CONFIG.width = width;
+    CONFIG.height = height;
+    canvas.width = width;
+    canvas.height = height;
+    CONFIG.fontSize = Math.round(width * 0.085);
+    CONFIG.padding = Math.round(width * 0.085);
+    localStorage.setItem('wallpaper-resolution', JSON.stringify({ width, height }));
+}
 
 /**
  * キャンバスを描画
@@ -40,7 +88,7 @@ function draw() {
 
     words.forEach(paragraph => {
         let currentLine = '';
-        const characters = Array.from(paragraph); // サロゲートペア対応のためArray.fromを使用
+        const characters = Array.from(paragraph); // サロゲートペア対応
 
         characters.forEach(char => {
             const testLine = currentLine + char;
@@ -70,18 +118,16 @@ function draw() {
  * 画像として保存
  */
 function downloadImage() {
-    // 描画を強制実行
     draw();
 
     const dataURL = canvas.toDataURL('image/png');
     const link = document.createElement('a');
     
-    // ファイル名を生成 (日付_メモの冒頭)
     const now = new Date();
     const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
     const preview = memoInput.innerText.slice(0, 5).trim() || 'memo';
     
-    link.download = `iPhone14_Wallpaper_${dateStr}_${preview}.png`;
+    link.download = `Wallpaper_${CONFIG.width}x${CONFIG.height}_${dateStr}_${preview}.png`;
     link.href = dataURL;
     link.click();
 }
@@ -97,18 +143,53 @@ function adjustHeight() {
     }
 }
 
-// イベントリスナー
+// --- モーダル操作 ---
+function openModal() {
+    resWidthInput.value = CONFIG.width;
+    resHeightInput.value = CONFIG.height;
+    settingsModal.hidden = false;
+}
+
+function closeModal() {
+    settingsModal.hidden = true;
+}
+
+function handleSave() {
+    const w = parseInt(resWidthInput.value, 10);
+    const h = parseInt(resHeightInput.value, 10);
+    if (w >= 100 && w <= 9999 && h >= 100 && h <= 9999) {
+        saveSettings(w, h);
+        draw();
+        closeModal();
+    }
+}
+
+// --- イベントリスナー ---
 memoInput.addEventListener('input', draw);
 downloadBtn.addEventListener('click', downloadImage);
+settingsBtn.addEventListener('click', openModal);
+modalCancel.addEventListener('click', closeModal);
+modalSave.addEventListener('click', handleSave);
+
+// オーバーレイクリックで閉じる
+settingsModal.addEventListener('click', (e) => {
+    if (e.target === settingsModal) closeModal();
+});
 
 if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', adjustHeight);
 }
 
-// 初期描画
+// 初期化
 window.onload = () => {
+    loadSettings();
     draw();
     adjustHeight();
-    // モバイルでキーボードを即座に出すための試み
-    memoInput.focus();
+
+    // 初回アクセス時は解像度設定モーダルを表示
+    if (!localStorage.getItem('wallpaper-resolution')) {
+        openModal();
+    } else {
+        memoInput.focus();
+    }
 };

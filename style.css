@@ -93,3 +93,164 @@ body {
         font-size: 1.8rem;
     }
 }
+
+/* 設定ボタン */
+.settings-btn {
+    position: absolute;
+    top: max(16px, env(safe-area-inset-top));
+    right: 16px;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-color);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+}
+
+.settings-btn:active {
+    transform: scale(0.92);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* モーダル */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-overlay[hidden] {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal {
+    background: #2a2a2a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    max-width: 360px;
+    color: var(--text-color);
+    font-family: var(--font-main);
+    animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.modal-desc {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 24px;
+}
+
+.modal-inputs {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.input-group {
+    flex: 1;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    color: var(--text-color);
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.input-group input:focus {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.input-separator {
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.3);
+    padding-bottom: 12px;
+}
+
+.modal-hint {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 24px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: var(--font-main);
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s ease;
+}
+
+.modal-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+.modal-btn.primary {
+    background: var(--text-color);
+    color: #2a2a2a;
+}
+
+.modal-btn:active {
+    transform: scale(0.97);
+}
