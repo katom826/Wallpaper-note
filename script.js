@@ -120,16 +120,43 @@ function draw() {
 function downloadImage() {
     draw();
 
-    const dataURL = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    
     const now = new Date();
     const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-    const preview = memoInput.innerText.slice(0, 5).trim() || 'memo';
-    
-    link.download = `Wallpaper_${CONFIG.width}x${CONFIG.height}_${dateStr}_${preview}.png`;
-    link.href = dataURL;
+    const preview = (memoInput.innerText.trim().slice(0, 5) || 'memo')
+        .replace(/[\\/:*?"<>|\u0000-\u001f]/g, '_');
+    const filename = `Wallpaper_${CONFIG.width}x${CONFIG.height}_${dateStr}_${preview}.png`;
+
+    // Blob URL avoids building a large base64 data URL, which can fail for
+    // high-resolution wallpapers on mobile browsers.
+    if (typeof canvas.toBlob === 'function') {
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                downloadDataUrl(filename);
+                return;
+            }
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }, 'image/png');
+        return;
+    }
+
+    downloadDataUrl(filename);
+}
+
+function downloadDataUrl(filename) {
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
     link.click();
+    link.remove();
 }
 
 /**
